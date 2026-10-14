@@ -1,16 +1,24 @@
 # AICC AI-DLC
 
-AICC AI-DLC gives engineers one standardized, AI-powered way to plan, design, build, test, and deliver software. It runs on the **official [AWS AI-DLC](https://github.com/awslabs/aidlc-workflows) framework** — AICC does not build its own runtime or installer; you use the official AWS runtime and its supported harnesses exactly as provided. Pick your AI coding tool (Claude Code, Kiro CLI, or Cursor) and follow the Quick Start below.
+AICC AI-DLC gives engineers one standardized, AI-powered way to plan, design, build, test, and deliver software. It runs on the **official [AWS AI-DLC](https://github.com/awslabs/aidlc-workflows) framework** — AICC does not build its own runtime or installer; you use the official AWS runtime and its supported harnesses exactly as provided.
+
+**You use a terminal only once, to set up a project. All application development then happens inside your preferred supported AI coding application.**
 
 ## Quick Start — Install and Run
 
-Three things, in order:
+The engineer experience, end to end:
 
-1. **Install the official AWS AI-DLC runtime** — once per computer.
-2. **Install your AI coding tool** (Claude Code, Kiro CLI, or Cursor) — separately, from its vendor.
-3. **Configure the runtime for your project** — once per application project, then start AI-DLC inside your tool.
+1. Install the official AWS AI-DLC runtime (Terminal on macOS, PowerShell on Windows).
+2. Create a new application project folder wherever you like.
+3. Open that folder in the terminal and initialize Git if needed.
+4. Configure the official harness for your chosen coding application, from inside that folder.
+5. Run `aidlc doctor` from the folder and resolve any blocking errors.
+6. Close the terminal — setup is done.
+7. Open your supported AI coding application and select that project folder.
+8. Invoke `/aidlc` inside the application.
+9. Choose an official AI-DLC workflow and build the application through its stages and approvals.
 
-You do **not** need to clone this repository to use the runtime. Full step-by-step setup is below: [macOS](#macos--step-by-step-installation) · [Windows](#windows--step-by-step-installation).
+Steps 1–6 are a one-time, terminal-based setup; steps 7–9 are where you actually build, inside the app. You do **not** need to clone this repository to use the runtime. Full step-by-step setup is below: [macOS](#macos--step-by-step-installation) · [Windows](#windows--step-by-step-installation).
 
 **Install the runtime (official AWS installers — review remote scripts before running):**
 
@@ -152,9 +160,15 @@ Read the result by section:
 
 `aidlc doctor` ends with a count like `0 problems, N warnings.` **Warnings are advisory, not failures.** On a brand-new project a few are expected (for example, "hooks have not run in this project yet" clears after your first chat; "uncommitted changes under `aidlc/`" clears after you commit). A **`fail`** row is a real problem and prints its own fix. Machine-level success alone does **not** mean your project is configured — rely on the Project section.
 
-### Step 8 — Open your AI coding tool and activate AI-DLC
+### Step 8 — Close the terminal and build in your coding application
 
-Open the tool **in the configured project**, then invoke AI-DLC. See [Choose Your AI Development Tool](#choose-your-ai-development-tool) for the per-tool launch and invoke details, and [Confirm AI-DLC is active](#confirm-ai-dlc-is-active-read-this-first) before you build.
+Setup is complete — **you can close Terminal now.** From here you work inside your AI coding application, not the terminal:
+
+1. Open your supported AI coding application.
+2. Select (open) the project folder you just configured: `$HOME/Desktop/aicc-aidlc-test`.
+3. Invoke `/aidlc` inside the application and confirm the official workflow-selection interface appears.
+
+See [Choose Your AI Development Tool](#choose-your-ai-development-tool) for how each application opens a project and invokes AI-DLC, and [Confirm AI-DLC is active](#confirm-ai-dlc-is-active-read-this-first) before you build.
 
 ## Windows — Step-by-Step Installation
 
@@ -266,75 +280,46 @@ aidlc doctor
 
 Interpret the sections exactly as in the [macOS Step 7](#step-7--verify-the-project-configuration): Machine, Project, and Framework integrity, with advisory warnings distinct from `fail` rows.
 
-### Step 8 — Open your AI coding tool and activate AI-DLC
+### Step 8 — Close PowerShell and build in your coding application
 
-Open your tool in the configured project and invoke AI-DLC — see [Choose Your AI Development Tool](#choose-your-ai-development-tool) and [Confirm AI-DLC is active](#confirm-ai-dlc-is-active-read-this-first).
+Setup is complete — **you can close PowerShell now.** From here you work inside your AI coding application:
+
+1. Open your supported AI coding application.
+2. Select (open) the project folder you just configured, on your Desktop: `aicc-aidlc-test`.
+3. Invoke `/aidlc` inside the application and confirm the official workflow-selection interface appears.
+
+See [Choose Your AI Development Tool](#choose-your-ai-development-tool) for how each application opens a project and invokes AI-DLC, and [Confirm AI-DLC is active](#confirm-ai-dlc-is-active-read-this-first).
 
 ## Choose Your AI Development Tool
 
-Configure the harness from your project root (above), then open the tool and invoke AI-DLC. Each tool differs slightly.
+The one setup command that differs per tool is the harness configuration you ran in Step 5 — AI-DLC connects to each application differently, so there is **no single universal command that works identically for every tool.** Use the row for the application you installed, then open your project folder **in that application** and invoke AI-DLC. Not every tool offers an identical desktop interface; the detail that varies by tool and version is in the [harness guides](docs/guide/harnesses/README.md).
 
-### Claude Code (CLI)
+| Application | Configure in your project (Step 5) | Open your project | Invoke |
+| --- | --- | --- | --- |
+| Claude Code (Desktop **Code** workspace, or CLI) | `aidlc config --harness claude` | Open the project folder in the Claude desktop app's **Code** workspace (not Chat) | `/aidlc` |
+| Kiro — current (v3) | `aidlc config --harness kiro-ide` | Open the project in Kiro IDE and pick **aidlc** in the chat agent picker, or run `kiro-cli` | `/aidlc` |
+| Kiro — legacy | `aidlc config --harness kiro` | Open the project with `kiro-cli chat` | `/aidlc` |
+| Cursor | `aidlc config --harness cursor` | Open the project folder in Cursor | `/aidlc` |
 
-Check the CLI is available (Terminal / PowerShell):
+### Claude Code
 
-```bash
-claude --version
-```
+Configure with `aidlc config --harness claude`, then **open your project folder in the Claude desktop app's Code workspace** (not ordinary Chat) and type `/aidlc`. The AI-DLC plan-selection interface has been observed in Claude Desktop Code with AWS AI-DLC 2.11.0.
 
-Configure the harness in your project (if not already done):
+Desktop-only engineers do **not** need the standalone `claude` CLI when the Desktop Code experience runs the configured harness. Note that `aidlc doctor` may still warn that the standalone CLI is missing even when Desktop Code works correctly — that warning is advisory. (A terminal `claude` session can also run AI-DLC, but the desktop Code workspace is the primary experience here.)
 
-```bash
-aidlc config --harness claude
-```
+### Kiro
 
-Open Claude Code in the project:
-
-```bash
-claude
-```
-
-Inside Claude Code, invoke AI-DLC by typing `/aidlc` followed by what you want to build. Success looks like AI-DLC responding with a workflow or plan-selection prompt — not ordinary code generation.
-
-### Claude Code (Desktop — Code workspace)
-
-Claude's desktop app can run AI-DLC through its **Code** workspace (not ordinary Chat):
-
-1. Open the Claude desktop application.
-2. Select the **Code** workspace (not Chat).
-3. Open your local application project directory (the one you configured with `aidlc config --harness claude`).
-4. Start a Code session in that project.
-5. Type `/aidlc` with your request.
-6. Confirm the AI-DLC workflow/plan-selection interface appears.
-
-The AI-DLC plan-selection interface has been observed in Claude Desktop Code with AWS AI-DLC 2.11.0. Desktop-only users do not need the standalone `claude` CLI if their Desktop Code integration works — but note that `aidlc doctor` may still warn that the standalone CLI is missing even when Desktop Code works correctly. Desktop support is not guaranteed across every version or OS; rely on what your installed versions actually show.
-
-### Kiro CLI
-
-Check your Kiro version first — the correct harness depends on it:
-
-```bash
-kiro-cli --version
-```
-
-- **Kiro CLI v3 (2.24.1 or later):** use `aidlc config --harness kiro-ide` (this pins Kiro's v3 engine). Then open with `kiro-cli` and type `/aidlc`.
-- **Kiro CLI legacy (2.6 up to before 2.24.1):** use `aidlc config --harness kiro`. Then open with `kiro-cli chat` and type `/aidlc`.
-
-Do not use the legacy `kiro` harness with a v3 Kiro CLI: on the v3 engine the legacy hooks do not run, so `/aidlc` will not be recognized. If an existing `kiro` project needs to move to v3, run `aidlc config --harness kiro-ide` to switch it in place (see the [Kiro CLI guide](docs/guide/harnesses/kiro-cli.md)).
+The correct harness depends on your Kiro version — **current (v3) uses `kiro-ide`; legacy uses `kiro`** — because the legacy hooks do not run on Kiro's v3 engine, so `/aidlc` would not be recognized with the wrong row. Exact supported versions, how to check your version, and how to switch an existing project are in the [Kiro guide](docs/guide/harnesses/kiro-cli.md). After configuring, open the project in Kiro and invoke `/aidlc`.
 
 ### Cursor
 
-Install Cursor from its vendor first. Configure the harness in your project:
+Configure with `aidlc config --harness cursor`, then open your project folder in Cursor and type `/aidlc`. Details are in the [Cursor guide](docs/guide/harnesses/cursor.md).
 
-```bash
-aidlc config --harness cursor
-```
-
-Open the configured project in Cursor (or run `agent`), then type `/aidlc` with your request and confirm the AI-DLC workflow responds.
+> Supported-application coverage differs: not every AI coding tool provides the same desktop interface or the same integration surface. Rely on what your installed versions actually show, and see the [harness guides](docs/guide/harnesses/README.md) for tool- and version-specific requirements.
 
 ## Start Your First Application
 
-Keep your **application code in your own project repository** — not inside this framework repo. With the runtime installed, your project created, and your harness configured, open your tool in the project and invoke AI-DLC.
+Keep your **application code in your own project repository** — not inside this framework repo. With the runtime installed, your project configured, and the terminal closed, open your project folder **in your coding application** and invoke AI-DLC there.
 
 ### Confirm AI-DLC is active (read this first)
 
