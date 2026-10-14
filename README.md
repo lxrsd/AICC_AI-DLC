@@ -1,141 +1,138 @@
 # AICC AI-DLC
 
-**AICC AI-DLC** is an engineering solution built on the official
-**AWS AI-DLC (AI-Driven Development Life Cycle)** framework. It gives engineers
-**one standardized, AI-powered development solution** that turns an AI coding
-assistant into a structured, verifiable, governed software-delivery lifecycle —
-and packages that experience for two ways of working at AICC.
+AICC AI-DLC gives engineers one standardized, AI-powered way to plan, design, build, test, and deliver software. It runs on the **official [AWS AI-DLC](https://github.com/awslabs/aidlc-workflows) framework** — AICC does not build its own runtime or installer. Use your preferred supported AI coding tool (Claude Code, Kiro CLI, or Cursor) and follow the Quick Start below.
 
-> **Based on official AWS work.** The lifecycle engine, agents, harness
-> integrations, approval mechanisms, documentation, scripts, and tests in this
-> repository come from the official AWS project
-> **[awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)** and
-> are used under its **MIT-0** license. We do not recreate functionality AWS
-> already maintains. See [AWS upstream attribution & license](#aws-upstream-attribution--license).
+## Quick Start — Install & Run
 
-This repository is AICC's **development and testing** workspace. We build and
-validate here first; **nothing is promoted to an operational environment from
-this repository.**
+You install the **official AWS AI-DLC runtime once per computer**, then configure your chosen tool **per application project**. You do **not** need to clone this repository to use the runtime.
+
+> The commands below are the **official AWS installers** (not AICC-built). Please review any remote install script before running it.
+
+**macOS / Linux / WSL** — [detailed macOS guide](docs/guide/18-install-and-lifecycle.md):
+
+```bash
+curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
+```
+
+**Windows (PowerShell)** — run in a normal (non-admin) PowerShell window:
+
+```powershell
+irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex
+```
+
+You must also install your chosen AI coding tool separately — see [Choose your AI development tool](#choose-your-ai-development-tool).
+
+**Verify the installation** (open a new terminal first if `aidlc` is not found):
+
+```bash
+aidlc version   # prints the installed runtime version
+aidlc doctor    # checks runtime health and reports fixes
+```
+
+If `aidlc` is not found, your PATH needs the install directory — follow the instruction the installer printed, then re-open your terminal.
+
+## Choose Your AI Development Tool
+
+Install your preferred tool from its vendor (separately from AI-DLC), then run its configure command **from your application project's root**. Commands are the official AWS ones.
+
+| Tool | Configure (in your project) | Open | Invoke |
+| --- | --- | --- | --- |
+| **Claude Code** | `aidlc config --harness claude` | `claude` | `/aidlc` |
+| **Kiro CLI** (>= 2.24.1, v3) | `aidlc config --harness kiro-ide` | `kiro-cli` | `/aidlc` |
+| **Kiro CLI** (>= 2.6, legacy) | `aidlc config --harness kiro` | `kiro-cli chat` | `/aidlc` |
+| **Cursor** | `aidlc config --harness cursor` | Open Cursor, or run `agent` | `/aidlc` |
+
+> **Kiro note (version matters):** current Kiro CLI (v3, **>= 2.24.1**) uses the `kiro-ide` harness; older Kiro CLI (**>= 2.6**, legacy) uses the `kiro` harness. Check `kiro-cli --version` and pick the matching row.
+
+After configuring, verify with `aidlc doctor`. Full per-tool setup (providers, trust prompts, prerequisites): [harness guides](docs/guide/harnesses/README.md) — [Claude Code](docs/guide/01-getting-started.md) · [Kiro CLI](docs/guide/harnesses/kiro-cli.md) · [Kiro IDE / v3](docs/guide/harnesses/kiro-ide.md) · [Cursor](docs/guide/harnesses/cursor.md).
+
+## Start Your First Application
+
+Keep your **application code in your own repository** — not inside this AICC framework repo.
+
+```bash
+mkdir -p ~/Projects/expense-management-demo
+cd ~/Projects/expense-management-demo
+git init
+```
+
+Configure your tool in that folder (example: Claude Code), then open it and start AI-DLC:
+
+```bash
+aidlc config --harness claude   # once per project
+claude                          # open your tool in the project
+```
+
+Inside the tool, invoke AI-DLC with a description of what you want to build:
+
+```text
+/aidlc Build an expense management application with receipt capture and approval workflows
+```
+
+(Codex uses `$aidlc`; in Kiro IDE, pick **aidlc** in the chat agent picker first.)
+
+**What happens next:** AI-DLC selects a workflow from your request, asks for the decisions it needs, and **stops at human approval gates** before moving forward through requirements → design → approval → code → tests → evidence. Artifacts are written under your project at `aidlc/spaces/<space>/intents/<YYMMDD>-<label>/`. Full walkthrough: [Your First Workflow](docs/guide/02-your-first-workflow.md).
+
+## Collaborative AI-DLC — Working with a Team
+
+- **Individual AI-DLC** — one engineer builds an application end to end on their own machine (everything above).
+- **Collaborative AI-DLC** — multiple engineers work on the **same** application using the official AWS multi-engineer capabilities: shared context, coordinated ownership of **units of work**, approval workflows, and controlled integration.
+
+Collaborative development is built on the framework's official multi-team/ensemble Construction — see [Construction and the Swarm](docs/harness-engineering/08-construction-and-swarm.md).
+
+> ⚠️ **Pending validation.** AICC has **not yet validated** the collaborative workflow end-to-end on this environment. Treat the linked material as the official reference until our validation is complete (see [Current development status](#current-development-status)).
+
+## Documentation
+
+- **Install & lifecycle (macOS / Linux / Windows):** [docs/guide/18-install-and-lifecycle.md](docs/guide/18-install-and-lifecycle.md)
+- **Getting started:** [docs/guide/01-getting-started.md](docs/guide/01-getting-started.md)
+- **Your first workflow:** [docs/guide/02-your-first-workflow.md](docs/guide/02-your-first-workflow.md)
+- **Harness guides (per tool):** [docs/guide/harnesses/](docs/guide/harnesses/) — [Kiro CLI](docs/guide/harnesses/kiro-cli.md), [Kiro IDE / v3](docs/guide/harnesses/kiro-ide.md), [Cursor](docs/guide/harnesses/cursor.md)
+- **Collaborative / multi-team Construction:** [docs/harness-engineering/08-construction-and-swarm.md](docs/harness-engineering/08-construction-and-swarm.md)
+- **Preserved official AWS README:** [README.aws-upstream.md](README.aws-upstream.md)
+- **Full official docs:** [docs/](docs/) ([guide](docs/guide/), [reference](docs/reference/), [roadmap](docs/roadmap.md))
+
+> AICC-specific step-by-step macOS, Windows, and collaborative onboarding guides are **planned**; until published, use the official guides linked above.
 
 ---
 
-## 1. Overview & mission
+## About AICC AI-DLC
 
-Our goal is a single, standardized AI-DLC experience for AICC engineers,
-delivered in two modes that both run on the **official AWS framework** rather
-than any custom-built lifecycle engine:
+### Mission & architecture
 
-- **Individual AI-DLC** — one engineer installs AICC AI-DLC on their own
-  computer and uses a supported AI development tool to plan, design, develop,
-  test, and deliver an application through the complete AWS AI-DLC methodology.
-- **Collaborative AI-DLC** — multiple engineers work together on the same
-  application using shared context, coordinated work ownership, approval
-  workflows, and controlled integration, leveraging AWS's official
-  collaborative capabilities.
+AICC AI-DLC adopts the **official AWS AI-DLC framework directly** to give AICC
+engineers one standardized AI-powered development solution, in two modes:
 
-Both modes use the same official engine, so an engineer who learns one is
-immediately productive in the other.
+- **Individual AI-DLC** — a single engineer builds an application through the
+  complete AWS AI-DLC lifecycle on their own machine.
+- **Collaborative AI-DLC** — multiple engineers collaborate on the same
+  application using AWS's official collaborative capabilities.
 
-## 2. Individual and Collaborative AI-DLC
+The core lifecycle engine, agents, harness integrations, and approval
+mechanisms come from AWS and live under [`core/`](core/). We **preserve the
+official AWS implementation and full Git history** (the engine is unmodified)
+and track AWS upstream. AICC adds only onboarding, documentation, configuration,
+and improvements — never a reimplementation of what AWS maintains.
 
-### Individual AI-DLC
-A self-contained experience for a single engineer and a single machine. The
-official framework installs a native `aidlc` command plus the runtime for the
-engineer's chosen harness; the engineer configures a project and runs the
-governed lifecycle (requirements → design → approval → code → tests → evidence)
-locally, with human approval gates enforced at each decision point.
+**Built-in Multi-Team Construction vs. the AWS Collaborative sample.** The engine
+already ships multi-engineer Construction (Units of work, Bolts, ensemble
+topologies, per-Unit worktree isolation, enforced reviewer receipts) — this is
+what our Collaborative mode uses. AWS's *separate* Collaborative AI-DLC **sample
+application** is **not vendored or integrated** here, and we make no claim that
+it is.
 
-### Collaborative AI-DLC
-A multi-engineer experience on a shared application, using AWS's official
-collaborative capabilities: shared context, coordinated ownership of work units,
-approval workflows, and controlled integration. AICC uses these capabilities as
-provided by upstream — **no AICC-custom collaboration service is built in this
-repository.**
+### Supported harnesses
 
-> These are **target experiences**. AICC has **not yet validated** either mode
-> end-to-end on this environment (see [Current development status](#6-current-development-status)).
+The official core is harness-neutral and ships integrations for all of these
+(see [`harness/`](harness/)): Claude Code, Kiro CLI, Kiro IDE, Codex CLI,
+Cursor, opencode, GitHub Copilot. AICC's onboarding examples focus on **Claude
+Code, Kiro CLI, and Cursor**.
 
-## 3. How engineers will use the solution
-
-The following are the **intended** end-to-end experiences, described in plain
-language. They reflect the official framework's documented behavior; they are
-not a claim that AICC has already run them here. For authoritative steps, follow
-the official guide — [`docs/guide/01-getting-started.md`](docs/guide/01-getting-started.md)
-and [`docs/guide/18-install-and-lifecycle.md`](docs/guide/18-install-and-lifecycle.md).
-
-**Individual workflow**
-1. Install AICC AI-DLC on a supported computer.
-2. Open or create an application project.
-3. Configure a supported AI development tool (harness).
-4. Start the official AI-DLC workflow.
-5. Complete requirements, design, approvals, implementation, and testing.
-6. Review the evidence and deliver the application.
-
-**Collaborative workflow**
-1. Install and configure the framework.
-2. Join a shared application project.
-3. Follow the official collaborative onboarding and coordination process.
-4. Work on an assigned or claimed unit of work.
-5. Complete the applicable AI-DLC workflow for that unit.
-6. Submit the work for review and integration.
-7. Contribute to the completed shared application.
-
-## 4. Architecture & official AWS foundation
-
-- The **core lifecycle engine comes from AWS** and lives under
-  [`core/`](core/) (agents, scopes, sensors, skills, hooks, knowledge,
-  templates, tools).
-- AWS provides the **agents, harness integrations, workflows, approval
-  mechanisms, and associated functionality**. We preserve them.
-- We **preserve the official AWS implementation and full Git history**; the
-  engine is **unmodified** in this repository.
-- AICC will add **only** necessary onboarding, documentation, configuration, and
-  improvements — not a reimplementation of what AWS maintains.
-- The repository **tracks official AWS upstream** via a fetch-only `upstream`
-  remote so we can pull in AWS changes over time.
-
-### Built-in Multi-Team Construction vs. the Collaborative AI-DLC sample
-
-These are two different things, and we treat them differently:
-
-- **Multi-Team / ensemble Construction (built in).** The official engine already
-  ships multi-engineer Construction: work is decomposed into **Units of work**
-  and **Bolts**, executed with ensemble topologies (collaborator, pipeline, mob,
-  hub-and-spoke), git **worktree** isolation per Unit, and enforced reviewer
-  receipts. This capability is present in [`core/`](core/) and documented in
-  [`docs/harness-engineering/08-construction-and-swarm.md`](docs/harness-engineering/08-construction-and-swarm.md).
-  This is what our **Collaborative AI-DLC** experience is built on.
-- **The separate AWS Collaborative AI-DLC sample application.** AWS also
-  publishes a *separate sample application* that demonstrates collaboration. That
-  sample is **not vendored or integrated** into this repository, and we make **no
-  claim** that it has been integrated here. If we reference it later, it will be
-  as an external example, kept distinct from the built-in capability above.
-
-## 5. Supported development tools (harnesses)
-
-The official core is harness-neutral and ships integrations for all of the
-following (see [`harness/`](harness/)):
-
-| Harness | Directory |
-|---------|-----------|
-| Claude Code | [`harness/claude`](harness/claude) |
-| Kiro CLI | [`harness/kiro`](harness/kiro) |
-| Kiro IDE | [`harness/kiro-ide`](harness/kiro-ide) |
-| Codex CLI | [`harness/codex`](harness/codex) |
-| Cursor | [`harness/cursor`](harness/cursor) |
-| opencode | [`harness/opencode`](harness/opencode) |
-| GitHub Copilot | [`harness/copilot`](harness/copilot) |
-
-## 6. Current development status
-
-The table distinguishes three things: **working** (verified in this repo),
-**upstream-documented** (available in the official framework but not yet
-validated by AICC), and **AICC-tested** (validated by us — currently none of the
-lifecycle flows).
+### Current development status
 
 | Item | Status |
 |------|--------|
-| Official AWS source — downloaded & preserved | ✅ **Working** — complete, unmodified, vendored in this repo |
+| Official AWS source — downloaded & preserved | ✅ **Working** — complete, unmodified, vendored |
 | Git history — preserved | ✅ **Working** — full upstream history retained |
 | AICC development repository — created & pushed | ✅ **Working** — this repo, tracking AWS upstream |
 | Official engine, agents, harnesses, approval mechanisms | 📘 **Upstream-documented** — shipped by AWS; not yet exercised here |
@@ -144,77 +141,33 @@ lifecycle flows).
 | Simplified AICC engineer installation | ⚪ **Planned — not implemented** |
 | Operational migration | ⚪ **Not started** |
 
-Legend: ✅ working & verified here · 📘 available/ documented upstream, not AICC-tested · 🟡 pending AICC validation · ⚪ planned / not started.
+Legend: ✅ working & verified here · 📘 available/documented upstream, not AICC-tested · 🟡 pending AICC validation · ⚪ planned / not started.
 
-**No lifecycle flow has been AICC-validated yet.** Where a capability is marked
-upstream-documented, it means AWS ships and documents it — not that we have run
-it on this setup.
+### Roadmap & acceptance criteria
 
-## 7. Installation & onboarding guidance
+**Roadmap:** baseline (done) → green test baseline → individual validation →
+collaborative validation → AICC onboarding layer → operational planning.
 
-The near-term goal is a **clean, upstream-trackable baseline** that an AICC
-engineer can install and run with minimal friction. We intend to:
+**Individual AI-DLC is complete when:** a new engineer can follow the documented
+install steps on a supported machine; the official runtime works with the
+selected harness; a real application completes the applicable lifecycle; human
+approval gates and lifecycle artifacts are verified; and the engineer can
+complete the GitHub delivery process.
 
-- Keep this repository a faithful mirror of AWS AI-DLC with full history.
-- Validate the individual lifecycle end-to-end on a Mac dev environment.
-- Validate the collaborative lifecycle using the official AWS capabilities.
-- Only then add AICC-specific onboarding/configuration and plan rollout.
+**Collaborative AI-DLC is complete when:** two or more engineers participate in
+the same project; team members coordinate and own separate units of work; shared
+context and dependencies are handled correctly; engineers complete their work
+using supported AI tools; changes pass review and controlled integration; the
+team delivers one working application; and the process is repeatable and
+documented.
 
-For the **authoritative** install and configuration steps, use the official
-instructions — preserved here as
-[`README.aws-upstream.md`](README.aws-upstream.md) — and the official guide:
+*These criteria are not yet passed.*
 
-- Getting started — [`docs/guide/01-getting-started.md`](docs/guide/01-getting-started.md)
-- Your first workflow — [`docs/guide/02-your-first-workflow.md`](docs/guide/02-your-first-workflow.md)
-- Install & lifecycle — [`docs/guide/18-install-and-lifecycle.md`](docs/guide/18-install-and-lifecycle.md)
-- Onboarding — [`docs/guide/onboarding.md`](docs/guide/onboarding.md)
-
-> We intentionally do **not** restate CLI commands here; the official README and
-> guide are the single source of truth and track the installed version.
-
-## 8. Development & validation roadmap
-
-1. **Baseline (done).** Vendor the official source with full history, configure
-   remotes (push to our fork only), and preserve AWS docs/attribution.
-2. **Green baseline (next).** Run the upstream test suite ([`tests/`](tests/))
-   and CI locally to confirm the untouched source passes on this environment.
-3. **Individual validation.** Install the runtime, run one real application
-   through the full lifecycle on a Mac, and verify approval gates and evidence.
-4. **Collaborative validation.** Exercise the official multi-engineer
-   Construction capability with two or more engineers on a shared application.
-5. **AICC onboarding layer.** Add only the necessary onboarding, documentation,
-   and configuration — no engine changes.
-6. **Operational planning.** Only after the above, plan a reviewed migration to
-   AICC's operational environment (separate from this repository).
-
-## 9. Definition of success
-
-These are the acceptance criteria. **None is passed yet.**
-
-**Individual AI-DLC is complete when:**
-- A new engineer can follow documented installation instructions on a supported machine.
-- The official AI-DLC runtime works with the selected harness.
-- A real application completes the applicable lifecycle.
-- Human approval gates and lifecycle artifacts are verified.
-- The engineer can complete the GitHub delivery process.
-
-**Collaborative AI-DLC is complete when:**
-- Two or more engineers can participate in the same application project.
-- Team members can coordinate and own separate units of work.
-- Shared context and dependencies are handled correctly.
-- Engineers can complete their work using supported AI tools.
-- Changes pass review and controlled integration.
-- The team delivers one working application.
-- The process is repeatable and documented.
-
-## 10. Repository structure
+### Repository structure
 
 ```
 AICC_AI-DLC/
 ├── core/            # the harness-neutral AI-DLC engine (from AWS, unmodified)
-│   ├── agents/      scopes/     sensors/    skills/
-│   ├── aidlc-common/ hooks/     knowledge/  memory/
-│   ├── templates/   tools/
 ├── harness/         # per-tool integrations: claude, kiro, kiro-ide, codex, cursor, opencode, copilot
 ├── plugins/         # optional plugins (e.g. test-pro)
 ├── docs/            # official documentation (guide, reference, harness-engineering, roadmap)
@@ -226,19 +179,10 @@ AICC_AI-DLC/
 └── README.md        # this AICC overview
 ```
 
-## 11. AWS upstream attribution & license
+### Official AWS attribution & license
 
-- **Upstream project:** [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows)
-  (official AWS Labs AI-DLC).
-- **License:** **MIT-0** (MIT No Attribution) — see [`LICENSE`](LICENSE).
-  Copyright Amazon.com, Inc. or its affiliates.
-- **Official documentation is preserved in this repository:**
-  [`README.aws-upstream.md`](README.aws-upstream.md), [`docs/`](docs/)
-  ([guide](docs/guide/), [reference](docs/reference/),
-  [harness-engineering](docs/harness-engineering/),
-  [roadmap](docs/roadmap.md)), [`AGENTS.md`](AGENTS.md),
-  [`CONTRIBUTING.md`](CONTRIBUTING.md), [`DEVELOPERS.md`](DEVELOPERS.md), and
-  [`CHANGELOG.md`](CHANGELOG.md).
+- **Upstream project:** [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) (official AWS Labs AI-DLC).
+- **License:** **MIT-0** (MIT No Attribution) — see [`LICENSE`](LICENSE). Copyright Amazon.com, Inc. or its affiliates.
+- Official documentation is preserved here: [`README.aws-upstream.md`](README.aws-upstream.md), [`docs/`](docs/), [`AGENTS.md`](AGENTS.md), [`CONTRIBUTING.md`](CONTRIBUTING.md), [`DEVELOPERS.md`](DEVELOPERS.md), [`CHANGELOG.md`](CHANGELOG.md).
 
-AICC AI-DLC adds AICC-specific packaging and (later) configuration on top of
-this upstream work; it does not claim ownership of the official AWS framework.
+AICC AI-DLC adds AICC-specific packaging and (later) configuration on top of this upstream work; it does not claim ownership of the official AWS framework.
