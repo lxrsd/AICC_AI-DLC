@@ -115,55 +115,84 @@ Whether a direct push succeeds depends on your current branch and HCG-AICC's rep
 
 Use **Terminal** (zsh) for every command in this section. The same seven steps apply.
 
+**Before You Begin**
+
+The commands below use `my-app` as an example application name and `HCG-AICC` as the GitHub organization. Replace `my-app` with your actual application name and use that same name consistently in every command. Replace `HCG-AICC` with your authorized GitHub organization or username if different.
+
+For example:
+
+- Project name: `contract-analyzer`
+- GitHub organization: `HCG-AICC`
+- GitHub repository: `HCG-AICC/contract-analyzer`
+- Local folder: `~/Desktop/contract-analyzer`
+
+Using these values consistently prevents directory and repository errors.
+
 #### Step 1 — Create Your Workspace
 
-Create a local workspace folder on your Desktop and enter it (done once):
+Create your application folder directly on your Desktop and enter it:
 
 ```bash
-mkdir -p "$HOME/Desktop/dev" && cd "$HOME/Desktop/dev"
+mkdir -p "$HOME/Desktop/my-app" && cd "$HOME/Desktop/my-app"
 ```
+
+**Change `my-app` to your project name before running this command.**
+
+This creates one application folder directly on the Desktop and enters it in Terminal. Every setup command that follows runs inside this folder — do not create another application folder inside it. If the folder already exists, confirm it is the project you intend and avoid combining unrelated files. Note: when iCloud Drive is enabled, the macOS Desktop may sync through iCloud; this location is not guaranteed to be excluded from cloud synchronization.
 
 #### Step 2 — Install AWS AI-DLC
 
-Install the official AWS runtime once per computer (review remote scripts before running):
+**AWS AI-DLC is installed once per computer. It does not need to be reinstalled for each application.**
 
-```bash
-curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
-```
-
-Confirm it is available:
+Check whether it is already installed:
 
 ```bash
 aidlc --version
 ```
 
-If a version is shown, skip the install command. If the installer updates your PATH, follow its printed instruction and open a new Terminal window, then `cd "$HOME/Desktop/dev"` again.
+If a version appears, skip installation. Otherwise install the official AWS runtime:
+
+```bash
+curl -fsSL https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.sh | sh
+```
+
+Then verify:
+
+```bash
+aidlc --version
+```
 
 #### Step 3 — Connect to Huron GitHub
 
-From inside your `dev` workspace, create a new private HCG-AICC repository (example name `my-app`) and clone it in one step:
+You already created the application folder in Step 1, so you connect that existing folder to GitHub rather than cloning into a new one. Requirements: Git and the GitHub CLI installed, GitHub authenticated, and appropriate repository permissions.
+
+Create the remote repository:
 
 ```bash
-gh repo create HCG-AICC/my-app --private --add-readme --clone
+gh repo create HCG-AICC/my-app --private --add-readme
 ```
 
-If the repository already exists, clone it instead:
+**Change `my-app` to your project name and `HCG-AICC` to your authorized organization or username if different.**
+
+Connect the existing local folder to GitHub:
 
 ```bash
-gh repo clone HCG-AICC/my-app
+git init -b main
+git remote add origin https://github.com/HCG-AICC/my-app.git
+git pull origin main
 ```
 
-Move into the project:
+**Important:** Replace the organization and application name in the GitHub URL with the same values used when creating the repository.
 
-```bash
-cd my-app
-```
+- `git init -b main` initializes Git inside the existing local folder.
+- `git remote add origin` connects the folder to GitHub.
+- `git pull origin main` retrieves the initial remote README and establishes the working branch.
 
-> The GitHub repository flow is included for consistency with Windows; it has not yet been validated on macOS. It requires Git, the GitHub CLI, authentication, and HCG-AICC permissions.
+No additional application folder should be created. If the remote repository or local Git configuration already exists, inspect the existing setup (`git remote -v`) instead of repeating the creation or init commands.
 
 #### Step 4 — Configure AI-DLC
 
-From inside the application folder, run the interactive setup and select your preferred harness:
+From inside the application folder, run the official interactive setup and select your preferred supported harness (choose recommended defaults where appropriate):
 
 ```bash
 aidlc config
@@ -171,15 +200,28 @@ aidlc config
 
 #### Step 5 — Verify Your Setup
 
+Confirm the project reports no configuration failures:
+
 ```bash
 aidlc doctor
 ```
 
+Then verify GitHub connectivity:
+
+```bash
+git remote -v
+git status
+```
+
+`git remote -v` must show your correct application repository. Advisory warnings about first-session hooks may appear before you start developing; a missing-harness-CLI warning may mean you need to install or enable that tool before using its CLI.
+
 #### Step 6 — Build Your Application
 
-Open the `my-app` folder in your preferred supported AI coding application and start the official AWS AI-DLC workflow through its documented entry point (`/aidlc` for most integrations; `$aidlc` for Codex).
+Open your application folder in your preferred supported AI coding application and start an official AWS AI-DLC workflow through that harness's documented entry point (`/aidlc` for most integrations; `$aidlc` for Codex). Per-tool entry points are in the [harness guides](docs/guide/harnesses/README.md).
 
 #### Step 7 — Save to GitHub
+
+After developing and testing:
 
 ```bash
 git status
@@ -187,6 +229,12 @@ git add .
 git commit -m "feat: implement AI-DLC application"
 git push origin main
 ```
+
+- `git add .` stages your file changes.
+- `git commit` records them locally.
+- `git push origin main` uploads committed changes to GitHub.
+
+**Important: changes committed locally will not appear on GitHub until you push.** Git does not track completely empty directories — if you need to keep one, add a placeholder file such as `.gitkeep` inside it before committing. Direct pushes must comply with repository permissions and branch-protection policies.
 
 ## Supported AI Coding Harnesses
 
