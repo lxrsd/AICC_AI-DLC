@@ -60,6 +60,128 @@ All development happens **inside the coding application**, not in Terminal or Po
 
 ---
 
+## Windows — Getting Started with AICC AI-DLC
+
+Follow these steps to set up your development environment, connect your application to Huron's GitHub organization, and start building with your preferred AI coding tool.
+
+**What you'll do:**
+
+1. **Create your development workspace** — Set up a local Windows folder outside OneDrive and SharePoint.
+2. **Install AWS AI-DLC** — Install the framework once on your computer.
+3. **Create your GitHub repository** — Create and connect an application repository under HCG-AICC.
+4. **Configure AI-DLC** — Select your preferred AI coding harness for the project.
+5. **Verify your setup** — Confirm everything is properly configured.
+6. **Start building** — Develop your application using the official AWS AI-DLC lifecycle.
+7. **Save your work** — Commit and push your application to Huron GitHub.
+
+Use **Windows PowerShell** for every command below. GitHub stores your application source; your desktop AI coding tool works against the local clone on your machine. You install AWS AI-DLC once per computer, but you configure it separately for each new project.
+
+### Step 1 — Create Your Local Development Workspace
+
+Huron-managed Windows desktops are often redirected to OneDrive. Your application development files must stay on the local Windows drive, so this step creates a local `dev` folder and (if your Desktop is redirected) adds a shortcut to it on the visible Desktop. You only do this once.
+
+```powershell
+$Dev = Join-Path $HOME 'Desktop\dev'; New-Item -ItemType Directory -Force -Path $Dev | Out-Null; $Desktop = [Environment]::GetFolderPath('Desktop'); if ($Desktop.TrimEnd('\') -ine (Split-Path $Dev -Parent).TrimEnd('\')) { $Shell = New-Object -ComObject WScript.Shell; $Link = $Shell.CreateShortcut((Join-Path $Desktop 'dev.lnk')); $Link.TargetPath = $Dev; $Link.WorkingDirectory = $Dev; $Link.Save() }; Set-Location -LiteralPath $Dev
+```
+
+This creates a local `dev` folder, makes it reachable from the visible Desktop, keeps application files out of OneDrive/SharePoint, and opens the folder in your PowerShell session. It works regardless of your Windows username.
+
+### Step 2 — Install AWS AI-DLC
+
+Installation is required **only once per computer**, not for every application. Install the official AWS runtime:
+
+```powershell
+irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex
+```
+
+Confirm it is available:
+
+```powershell
+aidlc --version
+```
+
+If a version number is displayed, AI-DLC is installed — skip the install command and continue. On Huron-managed endpoints the installer may be terminated or blocked by corporate certificate-verification policies; if that happens, work with your endpoint/IT support rather than disabling SSL or certificate checks.
+
+### Step 3 — Create Your HCG-AICC GitHub Repository
+
+GitHub is the central source-control platform for Huron AICC applications; you develop against a local clone of your GitHub repository. This step needs Git, the GitHub CLI (`gh`), an authenticated GitHub login, and permission to create repositories in the HCG-AICC organization.
+
+Create a new private repository (using `my-app` as the example name) and clone it into your `dev` folder:
+
+```powershell
+gh repo create HCG-AICC/my-app --private --add-readme --clone
+```
+
+This creates a private repository in HCG-AICC, initializes it with a README, clones it into your current `dev` folder, and connects the local copy to GitHub.
+
+If the repository already exists, clone it instead:
+
+```powershell
+gh repo clone HCG-AICC/my-app
+```
+
+Then move into the application folder:
+
+```powershell
+cd my-app
+```
+
+### Step 4 — Configure AWS AI-DLC
+
+Run this **from inside the application folder** and select your preferred harness from the official interactive setup:
+
+```powershell
+aidlc config
+```
+
+Choose one of the seven supported coding applications when prompted:
+
+- Claude Code
+- Codex CLI
+- GitHub Copilot
+- Cursor
+- Kiro CLI
+- Kiro IDE
+- opencode
+
+Select the application you actually use; do not simply accept a different preselected default. Remember: AI-DLC is installed once per machine, but configured per project.
+
+### Step 5 — Verify Your Setup
+
+```powershell
+aidlc doctor
+```
+
+This checks the runtime, framework, and project configuration. Resolve any reported failures before you start developing. (Warnings are advisory; only a `fail` row blocks — see [Verify Your Setup](#verify-your-setup-optional-diagnostics).)
+
+### Step 6 — Start Building
+
+Open your `my-app` project folder in the supported AI coding application you configured, then start the official AWS AI-DLC workflow through that application's documented entry point (for most desktop integrations this is `/aidlc`; Codex uses `$aidlc`). Choose a workflow and build through the lifecycle's stages and human approval gates. Per-tool entry points and prerequisites are in the [harness guides](docs/guide/harnesses/README.md).
+
+### Step 7 — Save Your Work to GitHub
+
+After developing and testing, commit and push your application:
+
+```powershell
+git status
+```
+
+```powershell
+git add .
+```
+
+```powershell
+git commit -m "feat: implement AI-DLC application"
+```
+
+```powershell
+git push origin main
+```
+
+These assume your current branch is `main` and that HCG-AICC allows direct pushes to it. Follow your organization's branch-protection and review policies where they apply.
+
+---
+
 ## Additional Setup & Reference (Optional / When Needed)
 
 Everything below is supporting reference. The three steps above are the full happy path; use these sections only when a situation calls for them.
