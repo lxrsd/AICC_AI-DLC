@@ -45,10 +45,10 @@ The commands below use `my-app` as an example application name and `HCG-AICC` as
 
 For example:
 
-- Project name: `contract-analyzer`
+- Project name: `my-app`
 - GitHub organization: `HCG-AICC`
-- GitHub repository: `HCG-AICC/contract-analyzer`
-- Local folder: `~/Desktop/contract-analyzer`
+- GitHub repository: `HCG-AICC/my-app`
+- Local folder: `~/Desktop/my-app`
 
 Using these values consistently prevents directory and repository errors.
 
@@ -267,7 +267,7 @@ Harness-specific prerequisites, versions, and entry points are documented in [`d
 
 Individual AI-DLC is one engineer building an application through the complete official lifecycle on their own machine. After invoking the workflow, the engineer works through requirements and architecture/design, reviews and responds to **human approval gates**, and then lets the framework proceed to implementation, testing, and validation — with development artifacts and evidence recorded along the way under the project's `aidlc/` workspace.
 
-Everything in [Getting Started](#getting-started) describes the individual experience. End-to-end AI-DLC execution on this environment is **pending AICC validation** (see [AICC Development Status](#aicc-development-status-and-future-template)).
+Everything in [Getting Started](#getting-started) describes the individual experience. Setup and workflow activation are verified on macOS and Windows; full end-to-end lifecycle execution on this environment is **pending final AICC validation** (see [AICC Standardization Status](#aicc-standardization-status)).
 
 ## Collaborative AI-DLC
 
@@ -325,19 +325,25 @@ AICC_AI-DLC/
 - **Preserved official AWS README:** [README.aws-upstream.md](README.aws-upstream.md)
 - **Full official docs:** [docs/](docs/)
 
-## AICC Development Status and Future Template
+## AICC Standardization Status
 
-This repository currently serves as AICC's AI-DLC **framework and documentation workspace**: the complete official AWS source is vendored (unmodified) with full history, and AICC adds onboarding documentation on top.
+AICC AI-DLC is Huron's **engineer onboarding and standardization solution** for the official AWS AI-DLC framework. Engineers create their own application repositories under HCG-AICC, install and configure the official AWS AI-DLC runtime, select a supported harness, and develop through AWS's methodology — requirements, design, human approval gates, implementation, and testing. AICC does not build or maintain an AI-DLC engine of its own; it standardizes how engineers adopt and run the AWS framework and provides the onboarding path above.
+
+The table below reports what has been verified. Setup and workflow activation are confirmed on both macOS and Windows; full end-to-end lifecycle validation and multi-engineer collaboration remain in progress and are reported honestly rather than assumed.
 
 | Item | Status |
 |------|--------|
 | Official AWS source — vendored & preserved | ✅ Complete and unmodified |
 | Engineer onboarding documentation | ✅ This README |
-| Individual lifecycle — end-to-end validation | 🟡 Pending |
+| Individual setup and workflow activation | ✅ Verified — runtime 2.11.0 (macOS and Windows), project configuration and harness files created, Claude Code recognizes `/aidlc`, AWS workflow-selection interface appears |
+| Individual end-to-end lifecycle | 🟡 Pending final validation |
 | Collaborative lifecycle — multi-engineer validation | 🟡 Pending |
-| Reusable application starter template | ⚪ Planned (future phase) |
 
-We plan to add a **reusable application starter template inside this same repository** in a later phase. It does **not** exist yet — do not look for or depend on a template today. This README will be updated when the template is available.
+"Setup and workflow activation" means the official AWS AI-DLC runtime installs, a project configures, a supported harness is wired up, and the AWS workflow-selection interface launches. It does **not** by itself assert that a complete application has been planned, approved, implemented, tested, and closed out through the lifecycle; that end-to-end validation is tracked separately above.
+
+### Roadmap
+
+A reusable application starter template is under consideration for a future phase to further streamline onboarding. It is not part of this solution today and is noted here only as a forward-looking plan.
 
 ## AWS Attribution and License
 
